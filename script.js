@@ -9,6 +9,14 @@ function Book(title, author, read) {
   (this.title = title), (this.author = author), (this.read = read);
 }
 
+Book.prototype.toggleRead = function () {
+  this.read = !this.read;
+};
+
+function findBookInLibrary(bookTitle) {
+  return myLibrary.find((book) => book.title == bookTitle);
+}
+
 function createBookFromInput() {
   let title = document.querySelector("#title").value;
   let author = document.querySelector("#author").value;
@@ -35,10 +43,27 @@ function newBookNode(book) {
   let removeBookButton = document.createElement("button");
   removeBookButton.innerText = "Remove book";
   removeBookButton.addEventListener("click", (e) => {
-    removeBookByTitle(e.target.parentNode.id);
+    bookTitle = e.target.parentNode.id;
+    book = findBookInLibrary(bookTitle);
+    removeBook(book);
   });
 
-  bookNode.append(bookTitle, bookAuthor, bookRead, removeBookButton);
+  let toggleReadButton = document.createElement("button");
+  toggleReadButton.innerText = "Mark as read/unread";
+  toggleReadButton.addEventListener("click", (e) => {
+    bookTitle = e.target.parentNode.id;
+    book = findBookInLibrary(bookTitle);
+    book.toggleRead();
+    updateBookshelf();
+  });
+
+  bookNode.append(
+    bookTitle,
+    bookAuthor,
+    bookRead,
+    removeBookButton,
+    toggleReadButton,
+  );
   return bookNode;
 }
 
@@ -56,9 +81,8 @@ function addBookToLibrary(book) {
   myLibrary.push(book);
 }
 
-function removeBookByTitle(bookTitle) {
-  bookIndex = myLibrary.findIndex((book) => book.title === bookTitle);
-  myLibrary.splice(bookIndex, 1);
+function removeBook(book) {
+  myLibrary.splice(myLibrary.indexOf(book), 1);
   updateBookshelf();
 }
 
